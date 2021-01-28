@@ -31,6 +31,7 @@ public class HUDController : MonoBehaviour
     {
         gameSceneController = FindObjectOfType<GameSceneController>();
         gameSceneController.ScoreUpdateOnKill += GameSceneController_ScoreUpdateOnKill;
+        gameSceneController.LifeLost += HideShip;
     }
 
     private void GameSceneController_ScoreUpdateOnKill(int pointValue)

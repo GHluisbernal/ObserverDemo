@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -16,6 +17,8 @@ public class PlayerController : MonoBehaviour
     private bool projectileEnabled = true;
     private WaitForSeconds shieldTimeOut;
     private GameSceneController gameSceneController;
+
+    public event Action HitByEnemy;
 
     #endregion
 
@@ -116,6 +119,7 @@ public class PlayerController : MonoBehaviour
         xp.transform.localScale = new Vector2(2, 2);
 
         Destroy(gameObject);
+        HitByEnemy?.Invoke();
     }
 
     #endregion

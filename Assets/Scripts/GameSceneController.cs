@@ -6,6 +6,8 @@ using UnityEngine;
 public class GameSceneController : MonoBehaviour
 {
     public event EnemyDestroyedHandler ScoreUpdateOnKill;
+    public event Action<int> LifeLost;
+
     #region Field Declarations
 
     [Header("Enemy & Power Prefabs")]
@@ -80,8 +82,19 @@ public class GameSceneController : MonoBehaviour
         PlayerController ship = Instantiate(playerShip, new Vector2(0, -4.67f), Quaternion.identity);
         ship.speed = playerSpeed;
         ship.shieldDuration = shieldDuration;
+        ship.HitByEnemy += Ship_HitByEnemy;
 
         yield return null;
+    }
+
+    private void Ship_HitByEnemy()
+    {
+        lives--;
+        LifeLost?.Invoke(lives);
+        if (lives > 0)
+        {
+            StartCoroutine(SpawnShip(true));
+        }
     }
 
     private IEnumerator SpawnEnemies()
