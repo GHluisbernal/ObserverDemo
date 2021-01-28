@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
 
     private bool projectileEnabled = true;
     private WaitForSeconds shieldTimeOut;
-    
+
     #endregion
 
     #region Startup
@@ -83,11 +83,12 @@ public class PlayerController : MonoBehaviour
         ProjectileController projectile =
             Instantiate(projectilePrefab, spawnPosition, Quaternion.AngleAxis(90, Vector3.forward));
 
-       projectile.gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+        projectile.gameObject.GetComponent<SpriteRenderer>().color = Color.green;
         projectile.gameObject.layer = LayerMask.NameToLayer("PlayerProjectile");
         projectile.isPlayers = true;
         projectile.projectileSpeed = 4;
         projectile.projectileDirection = Vector2.up;
+        DisableProjectile();
     }
 
     #endregion
@@ -122,7 +123,7 @@ public class PlayerController : MonoBehaviour
     {
         yield return shieldTimeOut;
         shield.SetActive(false);
-        
+
     }
 
     #endregion
