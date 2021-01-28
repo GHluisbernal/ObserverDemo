@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public delegate void EnemyDestroyedHandler(int pointValue);
-public class EnemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour, IEndGameObserver
 {
     #region Field Declarations
 
@@ -76,6 +77,13 @@ public class EnemyController : MonoBehaviour
         xPlosion.transform.localScale = new Vector2(2, 2);
 
         EnemyDetroyed?.Invoke(pointValue);
+        RemoveAndDestroy();
+    }
+
+    private void RemoveAndDestroy()
+    {
+        var gameSceneController = FindObjectOfType<GameSceneController>();
+        gameSceneController.RemoveObserver(this);
         Destroy(gameObject);
     }
 
@@ -121,6 +129,10 @@ public class EnemyController : MonoBehaviour
         shotDelay = new WaitForSeconds(shotdelayTime / 3);
         shotSpeed = shotSpeedxN;
     }
-
     #endregion
+
+    public void Notify()
+    {
+        Destroy(gameObject);
+    }
 }

@@ -35,7 +35,35 @@ public class GameSceneController : MonoBehaviour
 
     #endregion
 
+    #region Subject Implementation
+    private List<IEndGameObserver> endGameObserverList;
+
+    public void AddObserver(IEndGameObserver endGameObserver)
+    {
+        endGameObserverList.Add(endGameObserver);
+    }
+
+    public void RemoveObserver(IEndGameObserver endGameObserver)
+    {
+        endGameObserverList.Remove(endGameObserver);
+    }
+
+    private void NotifyObservers()
+    {
+        foreach(var observer in endGameObserverList)
+        {
+            observer.Notify();
+        }
+    }
+
+    #endregion
+
     #region Startup
+
+    private void Awake()
+    {
+        endGameObserverList = new List<IEndGameObserver>();
+    }
 
     void Start()
     {
@@ -94,6 +122,10 @@ public class GameSceneController : MonoBehaviour
         if (lives > 0)
         {
             StartCoroutine(SpawnShip(true));
+        } else
+        {
+            StopAllCoroutines();
+            NotifyObservers();
         }
     }
 
@@ -113,6 +145,7 @@ public class GameSceneController : MonoBehaviour
             enemy.shotdelayTime = currentLevel.enemyShotDelay;
             enemy.angerdelayTime = currentLevel.enemyAngerDelay;
             enemy.EnemyDetroyed += EnemyDestroyed;
+            AddObserver(enemy);
 
             yield return wait;
         }
@@ -130,7 +163,9 @@ public class GameSceneController : MonoBehaviour
         {
             int index = UnityEngine.Random.Range(0, powerUpPrefabs.Length);
             Vector2 spawnPosition = ScreenBounds.RandomTopPosition();
-            Instantiate(powerUpPrefabs[index], spawnPosition, Quaternion.identity);
+            var powerUp = Instantiate(powerUpPrefabs[index], spawnPosition, Quaternion.identity);
+            AddObserver(powerUp);
+
             yield return new WaitForSeconds(UnityEngine.Random.Range(currentLevel.powerUpMinimumWait,currentLevel.powerUpMaximumWait));
         }
     }

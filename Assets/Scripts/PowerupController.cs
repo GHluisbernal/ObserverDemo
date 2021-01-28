@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PowerupController :MonoBehaviour
+public class PowerupController :MonoBehaviour, IEndGameObserver
 {
     #region Field Declarations
 
@@ -38,12 +38,20 @@ public class PowerupController :MonoBehaviour
         if (powerType == PowerType.Shield)
         {
             var player = FindObjectOfType<PlayerController>();
-            player.EnableShield();
+            if (player != null)
+            {
+                player.EnableShield();
+            }
         }
         Destroy(gameObject);
     }
-
     #endregion
+
+    public void Notify()
+    {
+        Destroy(gameObject);
+    }
+
 }
 
 public enum PowerType
