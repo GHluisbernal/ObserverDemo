@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameSceneController : MonoBehaviour
 {
+    public event EnemyDestroyedHandler ScoreUpdateOnKill;
     #region Field Declarations
 
     [Header("Enemy & Power Prefabs")]
@@ -11,8 +13,8 @@ public class GameSceneController : MonoBehaviour
     [SerializeField] private EnemyController enemyPrefab;
     [SerializeField] private PlayerController playerShip;
     [SerializeField] private PowerupController[] powerUpPrefabs;
-	
-	[Header("Level Definitions")]
+
+    [Header("Level Definitions")]
     [Space]
     public List<LevelDefinition> levels;
     [HideInInspector] public LevelDefinition currentLevel;
@@ -43,8 +45,8 @@ public class GameSceneController : MonoBehaviour
     #region Level Management
 
     private void StartLevel(int levelIndex)
-	{
-     	currentLevel = levels[levelIndex];
+    {
+        currentLevel = levels[levelIndex];
 
         StartCoroutine(SpawnShip(false));
         StartCoroutine(SpawnEnemies());
@@ -97,11 +99,18 @@ public class GameSceneController : MonoBehaviour
             enemy.speed = currentLevel.enemySpeed;
             enemy.shotdelayTime = currentLevel.enemyShotDelay;
             enemy.angerdelayTime = currentLevel.enemyAngerDelay;
- 
+            enemy.EnemyDetroyed += EnemyDestroyed;
+
             yield return wait;
         }
     }
-    
+
+    private void EnemyDestroyed(int pointValue)
+    {
+        totalPoints += pointValue;
+        ScoreUpdateOnKill?.Invoke(totalPoints);
+    }
+
     private IEnumerator SpawnPowerUp()
     {
         while (true)

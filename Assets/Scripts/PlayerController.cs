@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     private bool projectileEnabled = true;
     private WaitForSeconds shieldTimeOut;
+    private GameSceneController gameSceneController;
 
     #endregion
 
@@ -22,8 +23,15 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        gameSceneController = FindObjectOfType<GameSceneController>();
+        gameSceneController.ScoreUpdateOnKill += GameSceneController_ScoreUpdateOnKill;
         shieldTimeOut = new WaitForSeconds(shieldDuration);
         EnableShield();
+    }
+
+    private void GameSceneController_ScoreUpdateOnKill(int pointValue)
+    {
+        EnableProjectile();
     }
 
     #endregion
@@ -64,7 +72,7 @@ public class PlayerController : MonoBehaviour
 
     #region Projectile Management
 
-    public void EnableProjectile()
+    private void EnableProjectile()
     {
         projectileEnabled = true;
         availableBullet.SetActive(projectileEnabled);
